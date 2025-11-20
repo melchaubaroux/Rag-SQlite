@@ -8,7 +8,7 @@ Ce Repos est un projet de RAG avec SQLITE
 
 * Ollama
 * Git
-* Windows : Visual Studio 2019 (C/C++ Development Tools)
+* Sous Windows : Visual Studio 2019 (C/C++ Development Tools)
 
 ### Clonage du dépôt
 
@@ -59,6 +59,12 @@ Dans deux terminaux séparés :
 python api/admin.py   # port 8000
 python api/user.py    # port 8001
 ```
+
+
+### Connection a l'api admin 
+
+Default Username : admin
+Default password : admin 
 
 ---
 
