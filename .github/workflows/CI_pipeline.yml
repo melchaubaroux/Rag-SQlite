@@ -1,0 +1,29 @@
+name: CI Pipeline
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check .
+      
+      - name: Run tests
+        run: pytest --cov=. --cov-report=xml
+      
+      - name: Security check
+        run: |
+          pip install bandit
+          bandit -r . -f json -o bandit-report.json
