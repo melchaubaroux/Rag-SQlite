@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Interface API RAG SQLite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        line-height: 1.6;
+        color: #1a1a1a;
+        background: #f5f5f5;
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        color: #1a1a1a;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+    .card {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+        font-size: 1.125rem;
+        margin-bottom: 16px;
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    label {
+        font-weight: 500;
+        color: #1a1a1a;
+        font-size: 0.9375rem;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        border: 2px solid #d1d5db;
+        border-radius: 6px;
+        transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    button,
+    input[type="submit"] {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #ffffff;
+        background: #2563eb;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    button:hover,
+    input[type="submit"]:hover {
+        background: #1d4ed8;
+    }
+
+    button:focus,
+    input[type="submit"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    button:active {
+        transform: translateY(1px);
+    }
+
+    .button-secondary {
+        background: #6b7280;
+    }
+
+    .button-secondary:hover {
+        background: #4b5563;
+    }
+
+    .button-danger {
+        background: #dc2626;
+    }
+
+    .button-danger:hover {
+        background: #b91c1c;
+    }
+
+    .status-message {
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 4px solid #2563eb;
+        font-weight: 500;
+    }
+
+    .result-box {
+        margin-top: 12px;
+        padding: 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        min-height: 44px;
+        font-family: monospace;
+        font-size: 0.875rem;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .form-row > div {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            padding: 12px;
+        }
+
+        .card {
+            padding: 16px;
+        }
+    }
+</style>
+</head>
+<body>
+<h1>Interface API Admin RAG SQLite</h1>
+
+{% if message %}
+<div class="status-message" role="status" aria-live="polite">
+    {{ message }}
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>Test de connexion</h2>
+    <form action="/connection" method="get">
+        <button type="button" onclick="callEndpoint('/connection','connection')" aria-label="Tester la connexion au serveur">
+            Tester connexion
+        </button>
+        <div id="connection" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Upload PDF</h2>
+    <form action="/upload" method="get">
+        <div>
+            <label for="pdfpath">Chemin fichier PDF</label>
+            <input id="pdfpath" name="path" type="text" required aria-required="true" placeholder="/chemin/vers/document.pdf">
+        </div>
+        <button type="button" onclick="callEndpoint('/upload','upload')" aria-label="Téléverser un document PDF">
+            Envoyer
+        </button>
+        <div id="upload" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Remplacer un document</h2>
+    <form action="/replace" method="get">
+        <div>
+            <label for="oldname">Nom du document existant</label>
+            <input id="oldname" name="name" type="text" required aria-required="true" placeholder="nom_document">
+        </div>
+        <div>
+            <label for="newpath">Chemin du nouveau PDF</label>
+            <input id="newpath" name="path" type="text" required aria-required="true" placeholder="/chemin/vers/nouveau.pdf">
+        </div>
+        <button type="button" onclick="callEndpoint('/replace','replace')" aria-label="Remplacer le document">
+            Remplacer
+        </button>
+        <div id="replace" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Supprimer un document</h2>
+    <form action="/delete" method="get">
+        <div>
+            <label for="delname">Nom du document</label>
+            <input id="delname" name="name" type="text" required aria-required="true" placeholder="nom_document">
+        </div>
+        <button type="button" onclick="callEndpoint('/delete','delete')" class="button-danger" aria-label="Supprimer le document">
+            Supprimer
+        </button>
+        <div id="delete" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Recherche</h2>
+    <form action="/request" method="get">
+        <div>
+            <label for="ask">Requête de recherche</label>
+            <input id="ask" name="request" type="text" required aria-required="true" placeholder="Votre recherche...">
+        </div>
+        <div class="form-row">
+            <div>
+                <label for="limit">Nombre de résultats</label>
+                <input id="limit" name="limit" type="number" min="1" max="50" value="10" required aria-required="true">
+            </div>
+        </div>
+        <button type="button" onclick="callEndpoint('/request','request')" aria-label="Lancer la recherche">
+            Rechercher
+        </button>
+        <div id="request" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Session</h2>
+    <form action="/logout" method="get">
+        <button type="submit"  class="button-danger" aria-label="Se déconnecter de la session">
+            Déconnexion
+        </button>
+
+    </form>
+</div>
+
+<script>
+async function callEndpoint(endpoint, outputId) {
+    const outputEl = document.getElementById(outputId);
+    outputEl.textContent = 'Chargement...';
+    
+    try {
+        const res = await fetch(endpoint);
+        const text = await res.text();
+        outputEl.textContent = text;
+    } catch (error) {
+        outputEl.textContent = 'Erreur: ' + error.message;
+    }
+}
+</script>
+</body>
+</html>
