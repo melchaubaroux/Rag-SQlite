@@ -63,8 +63,8 @@ python api/user.py    # port 8001
 
 ### Connection a l'api admin 
 
-Default Username : admin
-Default password : admin 
+Default Username : admin    
+Default password : admin    
 
 ---
 
