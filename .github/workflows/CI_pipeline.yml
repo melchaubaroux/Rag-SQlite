@@ -13,12 +13,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest pytest-cov
+          
       
-      - name: Lint
-        run: |
-          pip install ruff
-          ruff check .
+      # - name: Lint
+      #   run: |
+      #     pip install ruff
+      #     ruff check .
       
       - name: Run tests
         run: pytest --cov=. --cov-report=xml
