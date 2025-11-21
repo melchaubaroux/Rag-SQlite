@@ -3,7 +3,7 @@ global:
   smtp_smarthost: 'smtp.gmail.com:465'
   smtp_from: 'mel.chaubaroux@gmail.com'
   smtp_auth_username: 'mel.chaubaroux@gmail.com'
-  smtp_auth_password: 'TON_APP_PASSWORD'
+  smtp_auth_password: 'dfdt xuda uoil jlrb'
   smtp_require_tls: true
 
 route:
