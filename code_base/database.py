@@ -5,6 +5,8 @@ fichier de fonction pour les interactions avec une base sqlite3 et l'add on sqli
 import os
 import sqlite3
 import sqlite_vec
+import struct
+from typing import List
 from code_base.splitter_fonctions import parse_markdown
 
 db="./db/manette_doc"
@@ -28,12 +30,12 @@ def suppress_table(cursor,name:str):
 
 def request_table(cursor,name:str,colonnes:list[str]):
 
-    cursor.execute("SELECT   from '{}' ({}) ".format(name,",".join(colonnes)),)
+    cursor.execute("SELECT  {} FROM '{}' ".format(",".join(colonnes),name))
     return cursor.fetchall()
 
 def check_existance_table(cursor,name:str):
    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '{}' ".format(name))
-   return cursor.fetchall()
+   return cursor.fetchone()
 
 
 def get_tables_names (cursor) : 
@@ -54,7 +56,7 @@ def get_tables_names (cursor) :
     
 
 def add_row_in_table (cursor,name:str,colonnes:list[str],values=list[str]): 
-    cursor.execute("INSERT INTO '{}' ({})  VALUES {stringify_list(values)}".format(name,",".join(colonnes)))
+    cursor.execute("INSERT INTO '{}' ({})  VALUES {}".format(name,",".join(colonnes),stringify_list(values)))
 
 
 def add_rows_in_table (cursor,name:str,colonnes:list[str],values=list[list[str]]):
@@ -95,12 +97,13 @@ def add_elements_in_binded_table(cursor,name,values):
 def del_row_in_binded_table (cursor,table,value) : 
     if type(value)==int : 
         _id=value
-        cursor.execute("DELETE FROM '{}' WHERE id = {value};".format(table))
+        cursor.execute("DELETE FROM '{}' WHERE id = {};".format(table,value))
         cursor.execute("DELETE FROM '{}_embedding' WHERE rowid = {};".format(table,_id))
 
 
     if type(value)==str : 
-        _id=cursor.execute("SELECT id FROM '{}' WHERE texte='{}'".format(table,value)).fetchall()
+        _id=cursor.execute("SELECT id FROM '{}' WHERE texte='{}'".format(table,value)).fetchone()[0]
+        print(_id)
         cursor.execute("DELETE FROM '{}' WHERE texte LIKE '{}';".format(table,value))
         cursor.execute("DELETE FROM '{}_embedding' WHERE rowid = {};".format(table,_id))
 
@@ -232,53 +235,9 @@ def insert_document_in_markdown_format (model,path) :
 
 
 
-
-
-
-#TODO rejouter le commmit 
-
-# con,cursor=connection_to_sqlite_base(":memory:")
-# con.enable_load_extension(True)
-# sqlite_vec.load(con)
-# con.enable_load_extension(False)
-# test fonctionnel :
-
-# create_table(cursor,"movie",["title", "year", "score"])
-# print(check_existance_table(cursor,"movie"))
-# request_table(cursor,"movie",["title", "year", "score"])
-# cursor.execute("INSERT INTO movie (title, year, score)  VALUES ('blob','1990','10');")
-# print(cursor.fetchall())
-
-# request_table(cursor,"movie",["title", "year", "score"])
-# add_row_in_table(cursor,"movie",["title", "year", "score"],['blob','1990','10'])
-# add_rows_in_table(cursor,"movie",["title", "year", "score"],[['blob','1990','10'],['bob','1997','10'],['blo','1996','10'],['lob','1995','10']])
-# request_table(cursor,"movie",["title", "year", "score"])
-# add_elements_in_table(cursor,"movie",["title", "year", "score"],['blob','1990','10'])
-# add_elements_in_table(cursor,"movie",["title", "year", "score"],[['blob','1990','10'],['bob','1997','10'],['blo','1996','10'],['lob','1995','10']])
-# print(request_table(cursor,"movie",["title", "year", "score"]))
-# suppress_table(cursor,"movie")
-import struct
-from typing import List
 def serialize_f32(vector: List[float]) -> bytes:
     """serializes a list of floats into a compact "raw bytes" format"""
     return struct.pack("%sf" % len(vector), *vector)
-
-
-# cursor.execute("INSERT INTO test (texte)  VALUES ('blob');")
-# print(request_table(cursor,"test",["*"]))
-# cursor.execute(f"INSERT INTO test_embedding(rowid,embedding)  VALUES (?,?);",[1,serialize_f32([0.11])])
-# create_binded_table(cursor,"test",["id INTEGER PRIMARY KEY ","texte"])
-# add_elements_in_binded_table(cursor,"test",["test1",serialize_f32([1.0])])
-# add_elements_in_binded_table(cursor,"test",["test2",serialize_f32([2.0])])
-# del_row_in_binded_table("test",2)
-# add_elements_in_binded_table(cursor,"test",["test3",serialize_f32([3.0])])
-# print(request_table(cursor,"test",["*"]))
-# print(request_table(cursor,"test_embedding",["*"]))
-
-
-
-
-
 
 
 

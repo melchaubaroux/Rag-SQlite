@@ -131,7 +131,7 @@ def questionnning_rag(request):
     con.enable_load_extension(False)
 
     query=model.encode(request)
-    answer=search_in_vbase(cursor,query,10)
+    answer=search_in_vbase(cursor,query,1)
 
 
 
