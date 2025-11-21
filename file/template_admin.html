@@ -192,19 +192,45 @@
     </form>
 </div>
 
+
 <div class="card">
+    <h2>lister les Tables</h2>
+    <form action="/listing" method="get">
+
+        <button type="button" onclick="callEndpoint('/liste tables','liste tables')"  aria-label="Lister les tables">
+            Voir les tables 
+        </button>
+        <div id="liste tables" class="result-box" aria-live="polite"></div>
+    </form>
+</div>
+
+<!-- <div class="card">
     <h2>Upload PDF</h2>
-    <form action="/upload" method="get">
+    <form action="/upload" method="post">
         <div>
-            <label for="pdfpath">Chemin fichier PDF</label>
-            <input id="pdfpath" name="path" type="text" required aria-required="true" placeholder="/chemin/vers/document.pdf">
+            <label for="pdfpath">Téléversement de fichier PDF</label>
+            <input id="pdfpath" name="path" type="file" required aria-required="true">
         </div>
-        <button type="button" onclick="callEndpoint('/upload','upload')" aria-label="Téléverser un document PDF">
+        <button type="button" onclick="uploadPDF()" aria-label="Téléverser un document PDF">
             Envoyer
         </button>
         <div id="upload" class="result-box" aria-live="polite"></div>
     </form>
+</div> -->
+
+
+<div class="card">
+    <h2>Upload PDF</h2>
+    <div>
+        <label for="pdfpath">Téléversement de fichier PDF</label>
+        <input id="pdfpath" type="file" accept=".pdf" required aria-required="true">
+    </div>
+    <button type="button" onclick="uploadPDF()" aria-label="Téléverser un document PDF">
+        Envoyer
+    </button>
+    <div id="upload" class="result-box" aria-live="polite"></div>
 </div>
+
 
 <div class="card">
     <h2>Remplacer un document</h2>
@@ -280,6 +306,55 @@ async function callEndpoint(endpoint, outputId) {
     } catch (error) {
         outputEl.textContent = 'Erreur: ' + error.message;
     }
+
+// async function uploadPDF() {
+//     const fileInput = document.getElementById("pdfpath");
+//     if (!fileInput.files.length) {
+//         document.getElementById("upload").innerHTML = "Aucun fichier sélectionné";
+//         return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("pdf", fileInput.files[0]);
+
+//     const res = await fetch("/upload", {
+//         method: "POST",
+//         body: formData
+//     });
+
+//     const text = await res.text();
+//     document.getElementById("upload_result").innerHTML = text;
+// }
+async function uploadPDF() {
+    const fileInput = document.getElementById("pdfpath");
+    const resultDiv = document.getElementById("upload");
+    
+    if (!fileInput.files.length) {
+        resultDiv.innerHTML = "❌ Aucun fichier sélectionné";
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append("pdf", fileInput.files[0]);
+    
+    resultDiv.innerHTML = "⏳ Envoi en cours...";
+    
+    try {
+        const res = await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
+        
+        if (res.ok) {
+            const text = await res.text();
+            resultDiv.innerHTML = "✅ " + text;
+        } else {
+            resultDiv.innerHTML = "❌ Erreur serveur: " + res.status;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = "❌ Erreur réseau: " + error.message;
+    }
+}
 }
 </script>
 </body>

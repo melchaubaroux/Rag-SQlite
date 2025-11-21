@@ -1,0 +1,14 @@
+# groups:
+#   - name: api_alerts
+#     rules:
+#       - alert: HighRequestLatency
+#         expr: |
+#           rate(api_request_latency_seconds_sum[1m])
+#           /
+#           rate(api_request_latency_seconds_count[1m]) > 0.5
+#         for: 1m
+#         labels:
+#           severity: warning
+#         annotations:
+#           summary: "Temps de réponse élevé"
+#           description: "La latence moyenne de l'API dépasse 0.5 seconde."
