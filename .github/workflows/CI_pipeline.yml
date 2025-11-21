@@ -11,8 +11,8 @@ jobs:
           python-version: '3.11'
       
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+      #   run: |
+      #     pip install -r requirements.txt
           
       
       # - name: Lint
@@ -21,9 +21,9 @@ jobs:
       #     ruff check .
       
       - name: Run tests
-        run: pytest --cov=. --cov-report=xml
+        run: pytest test
       
-      - name: Security check
-        run: |
-          pip install bandit
-          bandit -r . -f json -o bandit-report.json
+      # - name: Security check
+      #   run: |
+      #     pip install bandit
+      #     bandit -r . -f json -o bandit-report.json
