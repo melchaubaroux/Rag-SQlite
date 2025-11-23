@@ -2,6 +2,11 @@
 
 Ce Repos est un projet de RAG avec SQLITE
 
+
+## mise a jour : 
+
+Ajout du fichier yml prometheus 
+
 ## Installation de l'environnement
 
 ### Prérequis
