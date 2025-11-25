@@ -37,11 +37,13 @@ con.enable_load_extension(False)
 
 
 # Initialisation de la table d'index 
-if len(check_existance_table(cursor,"index"))==0 : 
+# if len(check_existance_table(cursor,"index"))==0 : 
+if check_existance_table(cursor,"index")==False : 
     create_binded_table(cursor,"index",["id INTEGER PRIMARY KEY ","texte"])
 
 # Initialisation de la table d'utilisateur
-if len(check_existance_table(cursor,"user"))==0 :
+# if len(check_existance_table(cursor,"user"))==0 :
+if check_existance_table(cursor,"user")==False : 
     create_table(cursor,"user",["id INTEGER PRIMARY KEY ","username","password","role"])
     cursor.execute("INSERT INTO user (username,password,role)  VALUES  ('admin','admin','admin')")
     con.commit()
