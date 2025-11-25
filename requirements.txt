@@ -5,3 +5,5 @@ sqlite_vec
 uvicorn
 fastapi
 pytest
+prometheus_client
+python-multipart
