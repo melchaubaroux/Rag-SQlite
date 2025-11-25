@@ -22,9 +22,10 @@ jobs:
 
       
       - name: Run tests
+        env:
+            PYTHONPATH: ${{ github.workspace }}
         run: |
           pip install pytest
-          pip install -e . 
           pytest 
       
       # - name: Security check
