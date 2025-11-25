@@ -19,12 +19,12 @@ jobs:
       #   run: |
       #     pip install ruff
       #     ruff check .
-      - name: Debug
-        run: pwd && ls -R
+
       
       - name: Run tests
         run: |
           pip install pytest
+          pip install -e . 
           pytest 
       
       # - name: Security check
